@@ -44,9 +44,9 @@ class PayFastService
         $body = rtrim($body, '&');
 
         Log::info('PayFast: sending onsite/process request', [
-            'url'       => $this->baseUrl.'/onsite/process',
+            'url' => $this->baseUrl.'/onsite/process',
             'reference' => $orderData['reference'],
-            'amount'    => $orderData['amount'],
+            'amount' => $orderData['amount'],
             'item_name' => $orderData['item_name'],
         ]);
 
@@ -57,13 +57,13 @@ class PayFastService
 
         Log::info('PayFast: onsite/process response', [
             'status' => $response->status(),
-            'body'   => $response->body(),
+            'body' => $response->body(),
         ]);
 
         if ($response->failed()) {
             return [
                 'success' => false,
-                'uuid'    => null,
+                'uuid' => null,
                 'message' => 'Payment gateway error ('.$response->status().'): '.$response->body(),
             ];
         }
@@ -73,7 +73,7 @@ class PayFastService
         if (empty($uuid)) {
             return [
                 'success' => false,
-                'uuid'    => null,
+                'uuid' => null,
                 'message' => 'Unexpected response from payment gateway: '.$response->body(),
             ];
         }
@@ -90,15 +90,15 @@ class PayFastService
     private function buildOrderPayload(array $orderData): array
     {
         return [
-            'merchant_id'   => $this->merchantId,
-            'merchant_key'  => $this->merchantKey,
-            'return_url'    => config('app.url'),
-            'cancel_url'    => config('app.url'),
-            'notify_url'    => config('payfast.notify_url') ?? rtrim(config('app.url'), '/').'/payfast/notify',
+            'merchant_id' => $this->merchantId,
+            'merchant_key' => $this->merchantKey,
+            'return_url' => request()->root(),
+            'cancel_url' => request()->root(),
+            'notify_url' => config('payfast.notify_url') ?? rtrim(config('app.url'), '/').'/payfast/notify',
             'email_address' => $orderData['customer_email'],
-            'm_payment_id'  => $orderData['reference'],
-            'amount'        => number_format((float) $orderData['amount'], 2, '.', ''),
-            'item_name'     => $orderData['item_name'],
+            'm_payment_id' => $orderData['reference'],
+            'amount' => number_format((float) $orderData['amount'], 2, '.', ''),
+            'item_name' => $orderData['item_name'],
         ];
     }
 

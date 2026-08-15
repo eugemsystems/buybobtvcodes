@@ -11,10 +11,11 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@voucherguy.co.za'],
+            ['email' => 'admin@buybobtvcodes.co.za'],
             [
                 'name' => 'VoucherGuy Admin',
                 'email_verified_at' => now(),
+                'role' => 'super_admin',
                 'password' => Hash::make(':PE4m"Cg8k*wqUe'),
             ]
         );
