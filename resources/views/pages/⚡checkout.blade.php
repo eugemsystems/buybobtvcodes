@@ -635,7 +635,7 @@ new #[Title('Checkout')] #[Layout('layouts.public')] class extends Component
                 style="width:100%;border-radius:14px;background:#0b0b12;min-height:460px;overflow:hidden;"
             >
                 {{-- Loading skeleton --}}
-                <div x-show="!loaded" style="display:flex;align-items:center;justify-content:center;height:460px;">
+                <div x-show="!loaded" class="flex-center" style="height:460px;">
                     <svg style="width:28px;height:28px;color:#DDF247;animation:spin 1s linear infinite;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
                 </div>
 
@@ -782,10 +782,11 @@ new #[Title('Checkout')] #[Layout('layouts.public')] class extends Component
                         {{-- PayFast onsite --}}
                         @if ($checkoutType === 'onsite' && ! $pollingForPayment)
                             <div x-data="{ processing: false, pfUuid: '' }" x-init="pfUuid = $wire.paymentUuid || ''" x-on:payfast-uuid-ready.window="pfUuid = $event.detail.uuid; processing = false;" style="background:#1a1a1a;border-radius:18px;border:1px solid rgba(255,255,255,0.08);padding:28px;">
-                                <button x-bind:disabled="processing || !pfUuid" x-on:click="processing = true; window.payfast_do_onsite_payment({ uuid: pfUuid }, (result) => { result === true ? $wire.finalizeOrder() : ($wire.cancelPayment(), processing = false); });" style="width:100%;background:#DDF247;color:#111;font-weight:900;font-size:15px;padding:15px;border-radius:13px;border:none;font-family:'Manrope',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-                                    <span x-show="!processing" style="display:flex;align-items:center;gap:8px;"><svg style="width:17px;height:17px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Pay R{{ fmt_price($this->cartTotal) }}</span>
+                                <button x-bind:disabled="processing || !pfUuid" x-on:click="processing = true; window.payfast_do_onsite_payment({ uuid: pfUuid }, (result) => { result === true ? $wire.finalizeOrder() : ($wire.cancelPayment(), processing = false); });" style="width:100%;background:#DDF247;color:#111;font-weight:900;font-size:15px;padding:15px;border-radius:13px;border:none;font-family:'Manrope',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;">
+                                    <span x-show="!processing" class="inline-row"><svg style="width:17px;height:17px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Pay R{{ fmt_price($this->cartTotal) }}</span>
                                     <span x-show="processing">Processing…</span>
                                 </button>
+                                <img src="/payments.png" alt="Accepted payment methods" style="display:block;width:100%;max-width:340px;height:auto;margin:16px auto 0;opacity:0.92;" />
                             </div>
                         @endif
 

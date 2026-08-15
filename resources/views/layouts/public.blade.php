@@ -37,15 +37,18 @@
             * { cursor: none !important; }
             /* Restore native cursor inside open dialogs (top-layer; custom cursor can't render there) */
             dialog[open], dialog[open] * { cursor: auto !important; }
+            /* z-index is maxed out so the cursor always wins against page overlays (PesePay's
+               modal, PayFast's own onsite iframe overlay, etc.) — anything lower would risk
+               rendering behind whichever overlay currently has the highest stacking. */
             #cursor-inner {
                 position: fixed; width: 10px; height: 10px; border-radius: 50%;
-                background: var(--accent); pointer-events: none; z-index: 9999;
+                background: var(--accent); pointer-events: none; z-index: 2147483647;
                 transform: translate(-50%,-50%); transition: transform 0.1s;
             }
             #cursor-outer {
                 position: fixed; width: 36px; height: 36px; border-radius: 50%;
                 border: 1.5px solid rgba(221,242,71,0.5); pointer-events: none;
-                z-index: 9998; transform: translate(-50%,-50%);
+                z-index: 2147483646; transform: translate(-50%,-50%);
                 transition: transform 0.12s, width 0.2s, height 0.2s, opacity 0.2s;
             }
 
@@ -179,6 +182,13 @@
                 transition: all 0.25s ease;
             }
             .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+            /* Inline flex-row label for x-show toggled content — Alpine's x-show manipulates
+               the `display` property directly on the inline style attribute, so a flex layout
+               declared via inline style gets silently dropped when toggled. Using a class here
+               instead keeps the flex row intact regardless of Alpine's show/hide state. */
+            .inline-row { display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; }
+            .flex-center { display: flex; align-items: center; justify-content: center; }
 
             /* Divider */
             .divider { height: 1px; background: rgba(255,255,255,0.08); }

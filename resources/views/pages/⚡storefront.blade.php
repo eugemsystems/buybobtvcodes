@@ -741,14 +741,14 @@ new #[Title('Token Store')] #[Layout('layouts.public')] class extends Component
                                 x-bind:disabled="processing || !pfUuid"
                                 x-on:click="processing = true; window.payfast_do_onsite_payment({ uuid: pfUuid }, (result) => { processing = false; result === true ? $wire.finalizeOrder() : $wire.paymentFailed(); });"
                                 variant="primary"
-                                class="w-full bg-violet-600 hover:bg-violet-500"
+                                class="w-full bg-violet-600 hover:bg-violet-500 whitespace-nowrap"
                             >
-                                <span x-show="! processing" class="flex items-center justify-center gap-2">
-                                    <flux:icon.lock-closed class="size-4" />
+                                <span x-show="! processing" class="flex items-center justify-center gap-2 whitespace-nowrap">
+                                    <flux:icon.lock-closed class="size-4 shrink-0" />
                                     Pay Securely — R{{ fmt_price($this->selectedCategory?->price ?? 0) }}
                                 </span>
-                                <span x-show="processing" class="flex items-center justify-center gap-2">
-                                    <flux:icon.loading class="size-4 animate-spin" />
+                                <span x-show="processing" class="flex items-center justify-center gap-2 whitespace-nowrap">
+                                    <flux:icon.loading class="size-4 animate-spin shrink-0" />
                                     Opening secure payment…
                                 </span>
                             </flux:button>
@@ -761,6 +761,8 @@ new #[Title('Token Store')] #[Layout('layouts.public')] class extends Component
                             >
                                 Back
                             </flux:button>
+
+                            <img src="/payments.png" alt="Accepted payment methods" class="mx-auto mt-2 w-full max-w-xs opacity-90" />
                         </div>
                     @endif
 
