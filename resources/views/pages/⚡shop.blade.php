@@ -591,11 +591,11 @@ new #[Title('Shop All Tokens')] #[Layout('layouts.public')] class extends Compon
                             >
                                 {{-- Image --}}
                                 @if ($category->image_url)
-                                    <div style="aspect-ratio:16/9;overflow:hidden;background:#222;">
-                                        <img src="{{ $category->image_url }}" alt="{{ $category->name }}" style="width:100%;height:100%;object-fit:fit;" loading="lazy" />
+                                    <div style="overflow:hidden;background:#222;">
+                                        <img src="{{ $category->image_url }}" alt="{{ $category->name }}" style="width:100%;height:auto;display:block;" loading="lazy" />
                                     </div>
                                 @else
-                                    <div style="aspect-ratio:16/9;background:linear-gradient(135deg,#1e1e2e 0%,#252535 100%);display:flex;align-items:center;justify-content:center;">
+                                    <div style="height:180px;background:linear-gradient(135deg,#1e1e2e 0%,#252535 100%);display:flex;align-items:center;justify-content:center;">
                                         <svg style="width:38px;height:38px;color:rgba(255,255,255,0.09);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                                     </div>
                                 @endif

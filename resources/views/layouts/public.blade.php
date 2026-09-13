@@ -249,7 +249,7 @@
                 @endphp
                 <a href="{{ route('home') }}" wire:navigate style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;">
                     @if ($__siteLogo)
-                        <img src="{{ $__siteLogo }}" alt="{{ config('app.name') }}" style="max-width:120px;max-height:48px;object-fit:contain;flex-shrink:0;" />
+                        <img src="{{ $__siteLogo }}" alt="{{ site_name() }}" style="max-width:120px;max-height:48px;object-fit:contain;flex-shrink:0;" />
                     @else
                         <div style="width:32px;height:32px;border-radius:8px;background:#DDF247;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="#111"><path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/></svg>
@@ -287,7 +287,7 @@
             <div class="sec-inner">
          
                 <div class="footer-bottom">
-                    <p style="font-size:14px;color:rgba(255,255,255,0.50);font-family:'Manrope',sans-serif;">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                    <p style="font-size:14px;color:rgba(255,255,255,0.50);font-family:'Manrope',sans-serif;">&copy; {{ date('Y') }} {{ site_name() }}. All rights reserved.</p>
                     
                     <p style="font-size:12px;color:rgba(255,255,255,0.25);font-family:'Azeret Mono',monospace;">Secure payments · Instant delivery . +27 78 796 5339</p>
                 </div>

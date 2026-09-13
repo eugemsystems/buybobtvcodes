@@ -531,7 +531,7 @@ new #[Title('Categories')] class extends Component
                         type="url"
                     />
                     @if ($imageExternalUrl)
-                        <img src="{{ $imageExternalUrl }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg object-cover" onerror="this.style.display='none'" />
+                        <img src="{{ $imageExternalUrl }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg bg-zinc-800 object-contain" onerror="this.style.display='none'" />
                     @endif
                 @else
                     <div class="mt-2">
@@ -546,9 +546,9 @@ new #[Title('Categories')] class extends Component
                         @enderror
                     </div>
                     @if ($imageUpload)
-                        <img src="{{ $imageUpload->temporaryUrl() }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg object-cover" />
+                        <img src="{{ $imageUpload->temporaryUrl() }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg bg-zinc-800 object-contain" />
                     @elseif ($currentImagePreview)
-                        <img src="{{ $currentImagePreview }}" alt="Current image" class="mt-2 h-28 w-full rounded-lg object-cover opacity-60" />
+                        <img src="{{ $currentImagePreview }}" alt="Current image" class="mt-2 h-28 w-full rounded-lg bg-zinc-800 object-contain opacity-60" />
                         <p class="mt-1 text-xs text-zinc-500">Current image — upload a new file to replace it</p>
                     @endif
                 @endif

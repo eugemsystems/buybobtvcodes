@@ -47,3 +47,13 @@ it('shows the WhatsApp chat widget on the storefront', function () {
         ->assertOk()
         ->assertSee('https://wa.me/27787965339', false);
 });
+
+it('shows the reseller\'s store name in the storefront footer and title, not the platform app name', function () {
+    Store::factory()->create(['slug' => 'alpha', 'name' => "Alpha's Digital Shop"]);
+
+    $response = $this->get(storeUrl('alpha'));
+
+    $response->assertOk();
+    $response->assertSee("Alpha's Digital Shop");
+    $response->assertDontSee(config('app.name'));
+});

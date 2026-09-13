@@ -1,5 +1,19 @@
 <?php
 
+use App\Support\CurrentStore;
+
+if (! function_exists('site_name')) {
+    /**
+     * The public-facing brand name: the current reseller's store name when
+     * viewing their storefront, falling back to the platform's app name.
+     */
+    function site_name(): string
+    {
+        return app(CurrentStore::class)->get()?->name
+            ?: config('app.name');
+    }
+}
+
 if (! function_exists('fmt_price')) {
     /**
      * Format a monetary amount — whole numbers show without decimals (R50),

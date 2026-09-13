@@ -60,3 +60,13 @@ it('shows the reseller\'s own store logo on their dashboard sidebar', function (
         ->get('/reseller')
         ->assertSee('https://example.com/store-logo.png', false);
 });
+
+it('shows the reseller\'s own store name on their dashboard, not the platform app name', function () {
+    $store = Store::factory()->create(['name' => "Mike's Vouchers"]);
+    $reseller = User::factory()->reseller($store)->create();
+
+    $response = $this->actingAs($reseller)->get('/reseller');
+
+    $response->assertSee("Mike's Vouchers");
+    $response->assertDontSee(config('app.name'));
+});

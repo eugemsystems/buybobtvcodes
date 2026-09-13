@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Flux\Flux;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -43,6 +44,7 @@ new #[Title('Categories')] class extends Component
     public string $imageExternalUrl = '';
     public string $imageMode = 'url'; // 'url' or 'file'
     public ?string $currentImagePreview = null;
+    public string $selectedPublicImage = '';
 
     // JSON import
     #[Validate('nullable|file|max:10240')]
@@ -58,6 +60,32 @@ new #[Title('Categories')] class extends Component
     public bool $showCheckoutUrlModal = false;
     public string $checkoutUrl = '';
 
+    /** @return array<int, array{path: string, url: string}> */
+    #[Computed]
+    public function publicImages(): array
+    {
+        $extensions = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'];
+        $excludedRoot = public_path('build');
+
+        return collect(File::allFiles(public_path()))
+            ->filter(fn ($file) => in_array(strtolower($file->getExtension()), $extensions, true))
+            ->reject(fn ($file) => str_starts_with($file->getPathname(), $excludedRoot))
+            ->map(fn ($file) => [
+                'path' => str_replace('\\', '/', $file->getRelativePathname()),
+            ])
+            ->map(fn ($file) => [...$file, 'url' => asset($file['path'])])
+            ->sortBy('path')
+            ->values()
+            ->all();
+    }
+
+    public function updatedSelectedPublicImage(string $value): void
+    {
+        if ($value !== '') {
+            $this->imageExternalUrl = $value;
+        }
+    }
+
     #[Computed]
     public function categories(): LengthAwarePaginator
     {
@@ -72,7 +100,7 @@ new #[Title('Categories')] class extends Component
 
     public function openCreate(): void
     {
-        $this->reset(['editingId', 'name', 'price', 'description', 'imageUpload', 'imageExternalUrl', 'currentImagePreview']);
+        $this->reset(['editingId', 'name', 'price', 'description', 'imageUpload', 'imageExternalUrl', 'currentImagePreview', 'selectedPublicImage']);
         $this->isToken = true;
         $this->imageMode = 'url';
         $this->resetValidation();
@@ -88,6 +116,7 @@ new #[Title('Categories')] class extends Component
         $this->description = $category->description ?? '';
         $this->isToken = (bool) $category->is_token;
         $this->imageUpload = null;
+        $this->selectedPublicImage = '';
 
         $img = $category->image ?? '';
 
@@ -485,6 +514,14 @@ new #[Title('Categories')] class extends Component
                 </div>
 
                 @if ($imageMode === 'url')
+                    @if ($this->publicImages)
+                        <flux:select wire:model.live="selectedPublicImage" class="mt-2">
+                            <flux:select.option value="">Choose from public folder…</flux:select.option>
+                            @foreach ($this->publicImages as $img)
+                                <flux:select.option :value="$img['url']">{{ $img['path'] }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                    @endif
                     <flux:input
                         wire:model="imageExternalUrl"
                         class="mt-2"
@@ -492,7 +529,7 @@ new #[Title('Categories')] class extends Component
                         type="url"
                     />
                     @if ($imageExternalUrl)
-                        <img src="{{ $imageExternalUrl }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg object-cover" onerror="this.style.display='none'" />
+                        <img src="{{ $imageExternalUrl }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg bg-zinc-800 object-contain" onerror="this.style.display='none'" />
                     @endif
                 @else
                     <div class="mt-2">
@@ -507,9 +544,9 @@ new #[Title('Categories')] class extends Component
                         @enderror
                     </div>
                     @if ($imageUpload)
-                        <img src="{{ $imageUpload->temporaryUrl() }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg object-cover" />
+                        <img src="{{ $imageUpload->temporaryUrl() }}" alt="Preview" class="mt-2 h-28 w-full rounded-lg bg-zinc-800 object-contain" />
                     @elseif ($currentImagePreview)
-                        <img src="{{ $currentImagePreview }}" alt="Current image" class="mt-2 h-28 w-full rounded-lg object-cover opacity-60" />
+                        <img src="{{ $currentImagePreview }}" alt="Current image" class="mt-2 h-28 w-full rounded-lg bg-zinc-800 object-contain opacity-60" />
                         <p class="mt-1 text-xs text-zinc-500">Current image — upload a new file to replace it</p>
                     @endif
                 @endif
