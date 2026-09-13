@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Payout;
 use App\Models\Token;
 use App\Models\Transaction;
+use App\Support\Mask;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -304,7 +305,7 @@ new #[Title('My Store')] class extends Component
                     @foreach ($this->recentTransactions as $tx)
                         <div class="flex items-center justify-between gap-2">
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-medium">{{ $tx->customer_email }}</p>
+                                <p class="truncate text-sm font-medium">{{ Mask::email($tx->customer_email) }}</p>
                                 <p class="text-xs text-zinc-500">{{ $tx->created_at->diffForHumans() }}</p>
                             </div>
                             <div class="flex shrink-0 items-center gap-2">

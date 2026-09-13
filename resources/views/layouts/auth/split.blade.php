@@ -8,8 +8,8 @@
             <div class="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-e dark:border-neutral-800">
                 <div class="absolute inset-0 bg-neutral-900"></div>
                 <a href="{{ route('home.bare') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
-                    <span class="flex h-10 w-10 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="me-2 h-7 fill-current text-white" />
+                    <span class="flex h-10 w-10 items-center justify-center rounded-md overflow-hidden">
+                        <x-app-logo-icon class="me-2 size-7 fill-current text-white" />
                     </span>
                     {{ config('app.name', 'Laravel') }}
                 </a>

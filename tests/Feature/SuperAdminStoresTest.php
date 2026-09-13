@@ -5,6 +5,7 @@ use App\Models\Store;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -57,6 +58,62 @@ it('lets a super-admin drill into a specific store report', function () {
         ->test('pages::admin.store-report', ['store' => $store])
         ->assertOk()
         ->assertSee($store->name);
+});
+
+it('lets a super-admin update a reseller\'s login email and password', function () {
+    $admin = User::factory()->create();
+    $store = Store::factory()->create();
+    $owner = User::factory()->reseller($store)->create(['email' => 'old@example.com']);
+    $store->update(['owner_id' => $owner->id]);
+
+    Livewire::actingAs($admin)
+        ->test('pages::admin.stores')
+        ->call('openEdit', $store->id)
+        ->assertSet('editOwnerEmail', 'old@example.com')
+        ->set('editOwnerEmail', 'new-login@example.com')
+        ->set('editOwnerPassword', 'brand-new-password')
+        ->set('editOwnerPasswordConfirmation', 'brand-new-password')
+        ->call('saveEdit')
+        ->assertSet('showEditModal', false);
+
+    $owner->refresh();
+    expect($owner->email)->toBe('new-login@example.com');
+    expect(Hash::check('brand-new-password', $owner->password))->toBeTrue();
+});
+
+it('lets a super-admin update a reseller\'s login email without changing the password', function () {
+    $admin = User::factory()->create();
+    $store = Store::factory()->create();
+    $owner = User::factory()->reseller($store)->create(['email' => 'old@example.com']);
+    $store->update(['owner_id' => $owner->id]);
+    $originalPassword = $owner->password;
+
+    Livewire::actingAs($admin)
+        ->test('pages::admin.stores')
+        ->call('openEdit', $store->id)
+        ->set('editOwnerEmail', 'new-login@example.com')
+        ->call('saveEdit');
+
+    $owner->refresh();
+    expect($owner->email)->toBe('new-login@example.com');
+    expect($owner->password)->toBe($originalPassword);
+});
+
+it('rejects a reseller login email already used by another account', function () {
+    $admin = User::factory()->create();
+    $store = Store::factory()->create();
+    $owner = User::factory()->reseller($store)->create(['email' => 'old@example.com']);
+    $store->update(['owner_id' => $owner->id]);
+    User::factory()->create(['email' => 'taken@example.com']);
+
+    Livewire::actingAs($admin)
+        ->test('pages::admin.stores')
+        ->call('openEdit', $store->id)
+        ->set('editOwnerEmail', 'taken@example.com')
+        ->call('saveEdit')
+        ->assertHasErrors(['editOwnerEmail']);
+
+    expect($owner->fresh()->email)->toBe('old@example.com');
 });
 
 it('denies resellers access to the stores page', function () {

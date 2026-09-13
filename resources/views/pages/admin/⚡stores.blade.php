@@ -28,6 +28,9 @@ new #[Title('Stores')] class extends Component
     public ?int $editingId = null;
     public string $editName = '';
     public string $editCommissionRate = '';
+    public string $editOwnerEmail = '';
+    public string $editOwnerPassword = '';
+    public string $editOwnerPasswordConfirmation = '';
 
     public function updatedNewStoreName(string $value): void
     {
@@ -98,25 +101,42 @@ new #[Title('Stores')] class extends Component
 
     public function openEdit(int $storeId): void
     {
-        $store = Store::findOrFail($storeId);
+        $store = Store::with('owner')->findOrFail($storeId);
         $this->editingId = $store->id;
         $this->editName = $store->name;
         $this->editCommissionRate = $store->commission_rate !== null ? (string) $store->commission_rate : '';
+        $this->editOwnerEmail = $store->owner?->email ?? '';
+        $this->editOwnerPassword = '';
+        $this->editOwnerPasswordConfirmation = '';
         $this->resetValidation();
         $this->showEditModal = true;
     }
 
     public function saveEdit(): void
     {
+        $store = Store::with('owner')->findOrFail($this->editingId);
+
         $this->validate([
             'editName' => 'required|string|max:255',
             'editCommissionRate' => 'nullable|numeric|min:0|max:100',
+            'editOwnerEmail' => [
+                'required', 'email', 'max:255',
+                Rule::unique('users', 'email')->ignore($store->owner_id),
+            ],
+            'editOwnerPassword' => ['nullable', 'string', 'min:8', 'same:editOwnerPasswordConfirmation'],
         ]);
 
-        Store::findOrFail($this->editingId)->update([
+        $store->update([
             'name' => $this->editName,
             'commission_rate' => $this->editCommissionRate !== '' ? $this->editCommissionRate : null,
         ]);
+
+        if ($store->owner) {
+            $store->owner->update([
+                'email' => $this->editOwnerEmail,
+                ...($this->editOwnerPassword !== '' ? ['password' => $this->editOwnerPassword] : []),
+            ]);
+        }
 
         $this->showEditModal = false;
         unset($this->stores);
@@ -308,6 +328,32 @@ new #[Title('Stores')] class extends Component
                 min="0"
                 max="100"
                 placeholder="Leave blank to use the platform default"
+            />
+
+            <flux:separator text="Reseller Login" />
+
+            <flux:input
+                wire:model="editOwnerEmail"
+                label="Owner Email"
+                type="email"
+                placeholder="mike@example.com"
+                required
+            />
+
+            <flux:input
+                wire:model="editOwnerPassword"
+                label="New Password"
+                type="password"
+                placeholder="Leave blank to keep current password"
+                viewable
+            />
+
+            <flux:input
+                wire:model="editOwnerPasswordConfirmation"
+                label="Confirm New Password"
+                type="password"
+                placeholder="Repeat new password"
+                viewable
             />
 
             <div class="flex justify-end gap-2 pt-2">

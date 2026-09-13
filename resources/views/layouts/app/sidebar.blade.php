@@ -79,6 +79,9 @@
                         <flux:sidebar.item icon="banknotes" :href="route('reseller.wallet')" :current="request()->routeIs('reseller.wallet')" wire:navigate>
                             {{ __('Wallet') }}
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="cog-6-tooth" :href="route('reseller.settings')" :current="request()->routeIs('reseller.settings')" wire:navigate>
+                            {{ __('Settings') }}
+                        </flux:sidebar.item>
                     </flux:sidebar.group>
                 @endif
             </flux:sidebar.nav>

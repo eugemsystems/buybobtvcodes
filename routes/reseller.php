@@ -9,4 +9,5 @@ Route::middleware(['auth', 'verified', 'reseller', 'resolve-store-from-user'])->
     Route::livewire('/tokens', 'pages::reseller.tokens')->name('tokens');
     Route::livewire('/transactions', 'pages::reseller.transactions')->name('transactions');
     Route::livewire('/wallet', 'pages::reseller.wallet')->name('wallet');
+    Route::livewire('/settings', 'pages::reseller.settings')->name('settings');
 });

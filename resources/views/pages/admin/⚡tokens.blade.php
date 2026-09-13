@@ -348,9 +348,9 @@ new #[Title('Tokens')] class extends Component
             <flux:select
                 wire:model="importCategoryId"
                 label="Category"
-                placeholder="Select a category…"
                 required
             >
+                <flux:select.option value="">Select a category…</flux:select.option>
                 @foreach ($this->categories as $cat)
                     <flux:select.option :value="$cat->id">{{ $cat->name."-".$cat->description }}</flux:select.option>
                 @endforeach

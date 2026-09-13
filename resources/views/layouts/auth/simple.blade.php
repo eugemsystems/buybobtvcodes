@@ -12,7 +12,7 @@
             {{-- Logo --}}
             <a href="{{ route('home.bare') }}" class="mb-8 flex items-center gap-3" wire:navigate>
                 @if ($customLogo)
-                    <img src="{{ $customLogo }}" alt="{{ config('app.name') }}" style="height:131px;object-fit:contain;" />
+                    <img src="{{ $customLogo }}" alt="{{ config('app.name') }}" style="height:131px;max-width:280px;object-fit:contain;" />
                 @else
                     <div class="flex size-16 items-center justify-center rounded-2xl bg-zinc-800">
                         <x-app-logo-icon class="size-10 fill-current text-white" />

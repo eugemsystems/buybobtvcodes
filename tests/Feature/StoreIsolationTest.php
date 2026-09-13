@@ -7,6 +7,7 @@ use App\Models\Token;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Support\CurrentStore;
+use App\Support\Mask;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -60,8 +61,10 @@ it('never shows another store\'s transactions on the reseller transactions page'
     $response = $this->actingAs($resellerA)->get('/reseller/transactions');
 
     $response->assertOk();
-    $response->assertSee('a@storea.test');
+    $response->assertSee(Mask::email('a@storea.test'));
+    $response->assertDontSee('a@storea.test');
     $response->assertDontSee('b@storeb.test');
+    $response->assertDontSee(Mask::email('b@storeb.test'));
 });
 
 // Action-level isolation calls Livewire component methods directly, so

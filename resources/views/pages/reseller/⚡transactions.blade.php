@@ -5,6 +5,7 @@ use App\Enums\TransactionStatus;
 use App\Jobs\SendPurchaseEmail;
 use App\Models\Token;
 use App\Models\Transaction;
+use App\Support\Mask;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -152,8 +153,8 @@ new #[Title('Transactions')] class extends Component
             foreach ($rows as $row) {
                 fputcsv($handle, [
                     $row->created_at instanceof \Carbon\Carbon ? $row->created_at->format('Y-m-d H:i:s') : $row->created_at,
-                    $row->customer_email,
-                    $row->customer_phone ?? '',
+                    Mask::email($row->customer_email),
+                    Mask::phone($row->customer_phone ?? ''),
                     is_numeric($row->amount) ? number_format((float) $row->amount, 2, '.', '') : $row->amount,
                     $row->status instanceof TransactionStatus ? $row->status->value : $row->status,
                     $row->gateway ?? '',
@@ -262,8 +263,8 @@ new #[Title('Transactions')] class extends Component
 
                         <flux:table.cell>
                             <div>
-                                <p class="font-medium">{{ $tx->customer_email }}</p>
-                                <p class="text-xs text-zinc-500">{{ $tx->customer_phone }}</p>
+                                <p class="font-medium">{{ Mask::email($tx->customer_email) }}</p>
+                                <p class="text-xs text-zinc-500">{{ Mask::phone($tx->customer_phone) }}</p>
                             </div>
                         </flux:table.cell>
 
@@ -345,7 +346,7 @@ new #[Title('Transactions')] class extends Component
             <div class="mt-4 rounded-lg border border-zinc-700 bg-zinc-900 p-4 text-sm space-y-2">
                 <div class="flex justify-between">
                     <span class="text-zinc-500">Customer</span>
-                    <span class="text-zinc-200">{{ $tx->customer_email }}</span>
+                    <span class="text-zinc-200">{{ Mask::email($tx->customer_email) }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-zinc-500">Amount</span>

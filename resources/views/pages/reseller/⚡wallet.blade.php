@@ -4,6 +4,7 @@ use App\Enums\TransactionStatus;
 use App\Models\Payout;
 use App\Models\Store;
 use App\Models\Transaction;
+use App\Support\Mask;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -128,7 +129,7 @@ new #[Title('Wallet')] class extends Component
                     @foreach ($this->commissionEntries as $tx)
                         <div class="flex items-center justify-between gap-2">
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-medium">{{ $tx->customer_email }}</p>
+                                <p class="truncate text-sm font-medium">{{ Mask::email($tx->customer_email) }}</p>
                                 <p class="text-xs text-zinc-500">{{ $tx->created_at->format('d M Y') }} &middot; sale R{{ fmt_price($tx->amount) }}</p>
                             </div>
                             <span class="shrink-0 text-sm font-medium text-green-500">+R{{ fmt_price($tx->commission_amount) }}</span>

@@ -39,3 +39,11 @@ it('redirects the bare domain to login instead of serving a storefront', functio
     $this->get('http://'.config('tenancy.base_domain').'/')
         ->assertRedirect(route('login'));
 });
+
+it('shows the WhatsApp chat widget on the storefront', function () {
+    Store::factory()->create(['slug' => 'alpha']);
+
+    $this->get(storeUrl('alpha'))
+        ->assertOk()
+        ->assertSee('https://wa.me/27787965339', false);
+});

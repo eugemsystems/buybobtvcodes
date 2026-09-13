@@ -301,25 +301,12 @@ new #[Title('Tokens')] class extends Component
 
                         <flux:table.cell>
                             @php
-                                $code   = $token->token_code;
-                                $len    = strlen($code);
+                                $len    = strlen($token->token_code);
                                 $masked = $len > 8
-                                    ? substr($code, 0, 4).str_repeat('•', $len - 8).substr($code, -4)
-                                    : $code;
+                                    ? substr($token->token_code, 0, 4).str_repeat('•', $len - 8).substr($token->token_code, -4)
+                                    : str_repeat('•', $len);
                             @endphp
-                            <div class="flex items-center gap-2" x-data="{ revealed: false }">
-                                <span class="font-mono text-sm" x-show="!revealed">{{ $masked }}</span>
-                                <span class="font-mono text-sm" x-show="revealed" style="display:none">{{ $code }}</span>
-                                <button
-                                    type="button"
-                                    x-on:click="revealed = !revealed"
-                                    class="text-zinc-500 transition-colors hover:text-zinc-200"
-                                    :title="revealed ? 'Hide code' : 'Show code'"
-                                >
-                                    <flux:icon.eye x-show="!revealed" class="size-4" />
-                                    <flux:icon.eye-slash x-show="revealed" class="size-4" style="display:none" />
-                                </button>
-                            </div>
+                            <span class="font-mono text-sm">{{ $masked }}</span>
                         </flux:table.cell>
 
                         <flux:table.cell>{{ $token->category->name }}</flux:table.cell>
@@ -380,9 +367,9 @@ new #[Title('Tokens')] class extends Component
             <flux:select
                 wire:model="importCategoryId"
                 label="Category"
-                placeholder="Select a category…"
                 required
             >
+                <flux:select.option value="">Select a category…</flux:select.option>
                 @foreach ($this->categories as $cat)
                     <flux:select.option :value="$cat->id">{{ $cat->name."-".$cat->description }}</flux:select.option>
                 @endforeach

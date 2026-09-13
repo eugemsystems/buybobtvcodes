@@ -206,6 +206,17 @@
             @media (min-width: 640px)  { #shop-grid { grid-template-columns: repeat(2, 1fr); } }
             @media (min-width: 1280px) { #shop-grid { grid-template-columns: repeat(3, 1fr); } }
             #shop-cart { position: sticky; top: 90px; }
+
+            /* WhatsApp chat widget */
+            #whatsapp-widget {
+                position: fixed; right: 20px; bottom: 20px; z-index: 400;
+                width: 56px; height: 56px; border-radius: 50%;
+                background: #25D366; display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            #whatsapp-widget:hover { transform: scale(1.08); box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+            #whatsapp-widget svg { width: 30px; height: 30px; }
         </style>
     </head>
     <body class="min-h-screen text-white antialiased">
@@ -214,14 +225,31 @@
         <div id="cursor-inner"></div>
         <div id="cursor-outer"></div>
 
+        {{-- WhatsApp chat widget --}}
+        <a
+            id="whatsapp-widget"
+            href="https://wa.me/27787965339"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat with us on WhatsApp"
+            title="Chat with us on WhatsApp"
+        >
+            <svg viewBox="0 0 32 32" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.004 2.667c-7.363 0-13.333 5.97-13.333 13.333 0 2.353.615 4.646 1.784 6.665L2.667 29.333l6.83-1.791a13.27 13.27 0 0 0 6.507 1.708h.006c7.362 0 13.333-5.97 13.333-13.333s-5.977-13.25-13.339-13.25Zm0 24.402h-.005a11.06 11.06 0 0 1-5.636-1.543l-.404-.24-4.052 1.063 1.082-3.951-.264-.406a11.03 11.03 0 0 1-1.69-5.892c0-6.101 4.966-11.067 11.074-11.067 2.958 0 5.738 1.154 7.828 3.246a10.99 10.99 0 0 1 3.241 7.827c0 6.102-4.967 11.063-11.074 11.063Zm6.073-8.287c-.333-.167-1.966-.97-2.271-1.08-.305-.111-.527-.167-.749.167-.222.333-.86 1.08-1.055 1.302-.194.222-.388.25-.72.083-.333-.167-1.406-.518-2.678-1.652-.99-.883-1.659-1.974-1.853-2.307-.194-.334-.021-.514.146-.68.15-.15.333-.389.5-.583.167-.194.222-.333.333-.556.111-.222.056-.417-.028-.583-.083-.167-.749-1.806-1.026-2.473-.27-.65-.545-.562-.748-.572-.194-.01-.416-.012-.638-.012a1.226 1.226 0 0 0-.888.416c-.305.334-1.166 1.14-1.166 2.779 0 1.639 1.194 3.222 1.361 3.445.166.222 2.352 3.593 5.7 5.04.796.344 1.418.549 1.903.703.8.254 1.528.218 2.104.132.642-.096 1.966-.804 2.243-1.581.278-.777.278-1.443.194-1.581-.083-.139-.305-.222-.638-.389Z"/>
+            </svg>
+        </a>
+
         {{-- ── HEADER ── --}}
         <header id="site-header">
             <div id="site-header-inner">
                 {{-- Logo --}}
-                @php $__siteLogo = cache()->remember('setting.logo', 300, fn () => \App\Models\Setting::get('logo', '')); @endphp
+                @php
+                    $__storeLogo = app(\App\Support\CurrentStore::class)->get()?->logo_url;
+                    $__siteLogo = $__storeLogo ?: cache()->remember('setting.logo', 300, fn () => \App\Models\Setting::get('logo', ''));
+                @endphp
                 <a href="{{ route('home') }}" wire:navigate style="display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;">
                     @if ($__siteLogo)
-                        <img src="{{ $__siteLogo }}" alt="{{ config('app.name') }}" style="max-width:120px;object-fit:contain;flex-shrink:0;" />
+                        <img src="{{ $__siteLogo }}" alt="{{ config('app.name') }}" style="max-width:120px;max-height:48px;object-fit:contain;flex-shrink:0;" />
                     @else
                         <div style="width:32px;height:32px;border-radius:8px;background:#DDF247;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="#111"><path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/></svg>
@@ -257,74 +285,11 @@
         {{-- ── FOOTER ── --}}
         <footer style="background:#0d0d0d;border-top:1px solid rgba(255,255,255,0.07);padding:80px 0 40px;">
             <div class="sec-inner">
-                <div class="footer-grid">
-                    {{-- Brand --}}
-                    <div>
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-                            @if ($__siteLogo)
-                                <img src="{{ $__siteLogo }}" alt="{{ config('app.name') }}" style="object-fit:contain;flex-shrink:0;" />
-                            @else
-                                <div style="width:32px;height:32px;border-radius:8px;background:#DDF247;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="#111"><path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/></svg>
-                                </div>
-                            @endif
-
-                        </div>
-                        <p style="color:rgba(255,255,255,0.50);font-family:'Azeret Mono',monospace;font-size:13px;line-height:22px;">
-                            South Africa's fastest digital token store. Gaming, streaming, shopping &amp; more — delivered in seconds.
-                        </p>
-                    </div>
-                    {{-- Shop --}}
-                    <div>
-                        <p class="footer-col-title">Shop</p>
-                        <ul class="footer-links">
-                            <li><a href="{{ route('home') }}#store">Gaming Tokens</a></li>
-                            <li><a href="{{ route('home') }}#store">Streaming Tokens</a></li>
-                            <li><a href="{{ route('home') }}#store">Shopping Vouchers</a></li>
-                            <li><a href="{{ route('home') }}#store">All Tokens</a></li>
-                        </ul>
-                    </div>
-                    {{-- Company --}}
-                    <div>
-                        <p class="footer-col-title">Company</p>
-                        <ul class="footer-links">
-                            <li><a href="{{ route('home') }}#about">About Us</a></li>
-                            <li><a href="{{ route('home') }}#how-it-works">How It Works</a></li>
-                            <li><a href="{{ route('home') }}#faq">FAQ</a></li>
-                        </ul>
-                    </div>
-                    {{-- Legal --}}
-                    <div>
-                        <p class="footer-col-title">Legal</p>
-                        <ul class="footer-links">
-                            <li><a href="{{ route('privacy-policy') }}" wire:navigate>Privacy Policy</a></li>
-                            <li><a href="{{ route('terms-of-service') }}" wire:navigate>Terms of Service</a></li>
-                            <li><a href="{{ route('refund-policy') }}" wire:navigate>Refund Policy</a></li>
-                            <li><a href="{{ route('cancellation-policy') }}" wire:navigate>Cancellation Policy</a></li>
-                        </ul>
-                    </div>
-                    {{-- Contact --}}
-                    <div>
-                        <p class="footer-col-title">Contact</p>
-                        <ul class="footer-links">
-                            <li>South Africa</li>
-                            <li><a href="mailto:support@voucherguy.co.za">support@voucherguy.co.za</a></li>
-                            <li style="color:rgba(255,255,255,0.3);font-family:'Azeret Mono',monospace;font-size:12px;">Available 24 / 7</li>
-                        </ul>
-                    </div>
-                </div>
+         
                 <div class="footer-bottom">
                     <p style="font-size:14px;color:rgba(255,255,255,0.50);font-family:'Manrope',sans-serif;">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-                    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;">
-                        <a href="{{ route('privacy-policy') }}" wire:navigate style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Manrope',sans-serif;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#DDF247'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">Privacy Policy</a>
-                        <span style="font-size:12px;color:rgba(255,255,255,0.15);">·</span>
-                        <a href="{{ route('terms-of-service') }}" wire:navigate style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Manrope',sans-serif;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#DDF247'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">Terms of Service</a>
-                        <span style="font-size:12px;color:rgba(255,255,255,0.15);">·</span>
-                        <a href="{{ route('refund-policy') }}" wire:navigate style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Manrope',sans-serif;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#DDF247'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">Refund Policy</a>
-                        <span style="font-size:12px;color:rgba(255,255,255,0.15);">·</span>
-                        <a href="{{ route('cancellation-policy') }}" wire:navigate style="font-size:12px;color:rgba(255,255,255,0.35);font-family:'Manrope',sans-serif;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#DDF247'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">Cancellation Policy</a>
-                    </div>
-                    <p style="font-size:12px;color:rgba(255,255,255,0.25);font-family:'Azeret Mono',monospace;">Secure payments · Instant delivery · South Africa</p>
+                    
+                    <p style="font-size:12px;color:rgba(255,255,255,0.25);font-family:'Azeret Mono',monospace;">Secure payments · Instant delivery . +27 78 796 5339</p>
                 </div>
             </div>
         </footer>
